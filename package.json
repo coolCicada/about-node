@@ -1,0 +1,25 @@
+{
+  "name": "node-big",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ziyue.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coolCicada/about-node.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coolCicada/about-node/issues"
+  },
+  "homepage": "https://github.com/coolCicada/about-node#readme",
+  "dependencies": {
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.23.0"
+  }
+}
