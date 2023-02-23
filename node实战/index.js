@@ -1,11 +1,11 @@
 const Koa = require('koa');
 const app = new Koa();
-const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const static = require('koa-static');
 const session = require('koa-session');
 const Store = require('./store');
 const shortid = require('shortid');
+const router = require('koa-router')();
 
 const redisConfig = {
   redis: {
@@ -15,7 +15,6 @@ const redisConfig = {
     password: '',
   }
 };
-const redisCli = new Store(redisConfig);
 const sessionConfig = {
   key: 'koa:sess',
   maxAge: 86400000,
@@ -23,6 +22,14 @@ const sessionConfig = {
   store: new Store(redisConfig),
   genid: () => shortid.generate(),
 }
+const secret = 'my_secret';
+const jwt = require('koa-jwt')({ secret });
+
+router.get('/welcome', jwt, async (ctx, next) => {
+  ctx.body = { message: 'welcome!!!' };
+});
+
+app.use(router.routes());
 
 app.use(session(sessionConfig, app));
 app.use(static('static'));
@@ -51,58 +58,6 @@ app.use(async (ctx, next) => {
     ctx.body = 'no this router';
   }
 })
-
-const router = new Router();
-router.get('/api/get/userInfo', async (ctx) => {
-  const { name } = ctx.request.query;
-  ctx.body = `200: get, name: ${name}`;
-});
-router.get('/api/update/userInfo', async (ctx) => {
-  ctx.body = '200: update';
-});
-router.post('/api/post/userInfo', async (ctx) => {
-  let { name } = ctx.request.body;
-  ctx.body = `param name: ${name}`;
-});
-router.get('/setCookie', async (ctx) => {
-  ctx.cookies.set(
-    'id',
-    '123456',
-    {
-      domain: 'localhost',
-      expires: new Date('2023-02-23'),
-      httpOnly: false,
-      overwrite: false
-    }
-  );
-  ctx.body = '设置成功';
-});
-router.get('/getCookie', async (ctx) => {
-  const cookie = ctx.cookies.get('id');
-  console.log(cookie);
-  ctx.body = `cookie为：${cookie}`;
-});
-router.post('/login', async (ctx) => {
-  const postData = ctx.request.body;
-  if (ctx.session.usr) {
-    ctx.body = `huanying, ${ctx.session.usr}`;
-  } else {
-    ctx.session = postData;
-    ctx.body = 'first';
-  }
-});
-router.get('/redis/set/:key/:value', async (ctx) => {
-  const r = await redisCli.set(ctx.params.key, ctx.params.value, 5000);
-  ctx.body = r;
-});
-router.get('/redis/get/:key', async (ctx) => {
-  const r = await redisCli.get(ctx.params.key);
-  ctx.body = r;
-})
-
-app.use(router.routes()).use(async (ctx) => {
-  ctx.body = '404: no matched';
-});
 
 const PORT = 4000;
 app.listen(4000, () => {

@@ -1,49 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,
-    initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>登录</title>
+  <title>index</title>
 </head>
-
 <body>
-  <div>
-    <label for="user">用户名：</label>
-    <input type="text" name="user" id="user">
-  </div>
-  <div>
-    <label for="psd">密码：</label>
-    <input type="password" name="psd" id="psd">
-  </div>
-  <button type="button" id="login">登录</button>
-  <h1 id="data"></h1>
-  <script>
-    const login = document.getElementById('login');
-    login.addEventListener('click', function (e) {
-      const usr = document.getElementById('user').value;
-      const psd = document.getElementById('psd').value;
-      if (!usr || !psd) {
-        return;
-      }
-      //采用fetch发起请求
-      const req = fetch('http://localhost:4000/login', {
-        method: 'post',
-        body: `usr=${usr}&psd=${psd}`,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-      req.then(stream =>
-        stream.text()
-      ).then(res => {
-        document.getElementById('data').innerText = res;
-      })
-    })
-
-  </script>
+  <button onclick="welcome()">进入系统欢迎页面</button>
+  <button onclick="login()">登录</button>
+  <p></p>
 </body>
-
+<script>
+  function welcome() {
+    const token = localStorage.getItem('token')
+    fetch('/welcome', {
+      method: 'GET',
+      headers: {
+        'authorization': 'Bearer ' + token,
+        'content-type': 'application/json'
+      }
+    }).then(response => {
+      if(response.status === 401) {
+        alert('无权限！需要先登录')
+      } else {
+        return response.json()
+      }
+    }).then(json => {
+      document.querySelector('p').innerHTML = JSON.
+        stringify(json)
+    })
+  }
+  function login() {
+    fetch('/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        userName: 'liujianghong'
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(response => response.json())
+    .then(json => {
+      if(json.token) {
+        localStorage.setItem('token', json.token)
+        alert('登录成功')
+      }
+    })
+  }
+</script>
 </html>
