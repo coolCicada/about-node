@@ -2,7 +2,7 @@ import Koa from 'koa';
 import path from 'path';
 import { getHooks, deepMerge } from './utils';
 import { Hook, App } from './types';
-const hooks = [ 'router', 'lift' ];
+const hooks = [ 'static', 'router', 'lift' ];
 
 type Params = {
   appPath: string;

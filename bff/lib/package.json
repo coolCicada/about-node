@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/core/index.js",
-  "scripts": {
-    "build": "rm -rf ./dist && npx tsc"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/lodash": "^4.14.191",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "koa-static": "^5.0.0"
   }
 }
